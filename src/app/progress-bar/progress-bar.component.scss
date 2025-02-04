@@ -1,0 +1,21 @@
+
+.container-card-chart{
+    display: grid;
+    width: 100%;
+    height: auto; 
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+::ng-deep .p-card{
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-family: "Plus Jakarta Sans", serif !important;
+  }
+::ng-deep .p-card .p-card-title{
+    text-align: center;
+    font-family: "Plus Jakarta Sans", serif;
+    font-size: 0.96rem;
+  }
+
+

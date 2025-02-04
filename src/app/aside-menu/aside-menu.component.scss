@@ -1,0 +1,34 @@
+.direcciones {
+    width: 100%; /* Ocupa todo el ancho del menú vertical */
+    height: 100%;
+    font-family: "Plus Jakarta Sans", serif;
+    margin: 0;
+    padding: 0; /* Elimina el padding para que no haya espacios innecesarios */
+    list-style: none; /* Elimina los puntos de la lista */
+  }
+  
+  .direcciones li {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    margin-bottom: 0.2rem; /* Espacio entre elementos */
+  }
+  
+  .direcciones a {
+    display: block; /* Hace que el enlace ocupe todo el espacio del li */
+    text-decoration: none;
+    color: #ffffff;
+    padding: 0.75rem 1rem; /* Espaciado interno */
+    background-color: #212631; /* Color de fondo */
+    border-radius: 4px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Transición suave */
+    width: 100%; /* Ocupa todo el ancho del li */
+    box-sizing: border-box; /* Incluye el padding en el ancho */
+  }
+  
+  .direcciones a:hover {
+    background-color: #3a4252; /* Cambia el color de fondo al pasar el mouse */
+  }
+
+  .header-menu img{
+    width: 95%;
+    margin: .05rem;
+  }

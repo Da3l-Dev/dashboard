@@ -1,0 +1,70 @@
+html, body {
+  height: 100%;
+  font-size: 62.5%;
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor-principal {
+  display: flex; /* Usar Flexbox */
+  width: 100%;
+  height: 100%;
+}
+
+.menu-vertical {
+  width: 14%; /* Ancho del menú */
+  height: 100vh; /* Altura completa */
+  background-color: #212631; /* Color de fondo */
+  border-right: 1px solid #ccc; /* Borde derecho */
+  margin: 0;
+  padding: 0;
+  position: fixed; /* Fija el menú en su posición */
+  top: 0; /* Lo coloca en la parte superior */
+  left: 0; /* Lo coloca en el lado izquierdo */
+  z-index: 1000; /* Asegura que el menú esté por encima de otros elementos */
+}
+
+.content {
+  flex: 1; /* Ocupa el espacio restante */
+  background-color: #f8f9fa;
+  margin-left: 14%; /* Margen izquierdo igual al ancho del menú */
+  max-height: 100%; /* Altura completa */
+
+}
+
+.container-charts {
+  display: grid;
+  width: 100%;
+  max-width: 100%;
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+  gap: 1rem; /* Espacio entre elementos */
+  padding: 1rem;
+}
+
+.bar-chart-content {
+  width: 100%;
+  height: 100%;
+  grid-column: 1 / 2; /* Ocupa la primera columna */
+  grid-row: 1 / 3; /* Ocupa dos filas */
+  padding: 0.2rem;
+}
+
+.table-content {
+  width: 100%;
+  height: 100%;
+  grid-column: 2 / 4; /* Ocupa la segunda y tercera columna */
+  padding: 0.2rem;
+}
+
+.container-chart-line {
+  grid-column: 2 / 4; /* Ocupa la segunda y tercera columna */
+  grid-row: 2; /* Ocupa la segunda fila */
+  margin: 0;
+  padding: 0;
+}
+
+.header-charts {
+  width: 100%;
+  max-height: 2rem;
+  background-color: aqua;
+}

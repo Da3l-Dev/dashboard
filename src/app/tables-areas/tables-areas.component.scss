@@ -1,0 +1,46 @@
+/* Estilos para la tabla */
+:host ::ng-deep .p-datatable {
+    width: 100% !important; /* Asegura que la tabla ocupe el 100% del contenedor */
+    height: 100% !important;
+    background-color: #ffffff;
+  }
+  
+  :host ::ng-deep .p-datatable-table {
+    table-layout: auto; /* Ajusta el ancho de las columnas automáticamente */
+    border: none !important; /* Elimina el borde de la tabla */
+  }
+  
+  /* Estilos para las celdas */
+  :host ::ng-deep td {
+    background-color: #ffffff !important;
+    font-family: "Plus Jakarta Sans", serif !important;
+    color: #000000 !important;
+    border: none !important; /* Elimina los bordes de las celdas */
+    font-size: 0.91rem !important;
+    text-align: center !important;
+    font-weight: normal !important;
+    padding: 0.6rem !important;
+  }
+  
+  /* Estilos para las cabeceras */
+  :host ::ng-deep th {
+    background-color: #f2f2f2 !important;
+    font-family: "Plus Jakarta Sans", serif !important;
+    color: #000 !important;
+    border: none !important; /* Elimina los bordes de las cabeceras */
+    font-size: 0.9rem !important;
+    text-align: center !important;
+    padding: 0.6rem !important;
+  }
+  
+  /* Estilos para las filas */
+  :host ::ng-deep tr {
+    border: none !important; /* Elimina los bordes de las filas */
+    background-color: #ffffff;
+  }
+  
+  /* Estilos adicionales */
+  .white-table {
+    background-color: #ffffff !important;
+    color: #000;
+  }

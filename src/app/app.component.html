@@ -1,0 +1,38 @@
+<router-outlet></router-outlet>
+
+<div class="contenedor-principal">
+  <!-- Menú vertical -->
+  <aside class="menu-vertical">
+    <app-aside-menu></app-aside-menu>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="content">
+    <!-- Apartado de las cards -->
+    <div>
+      <app-card></app-card>
+    </div>
+
+    <!-- Grid de gráficos -->
+    <div class="container-charts">
+      <!-- Contenido de las garficas de progreso de areas -->
+      <div class="bar-chart-content">
+        <div class="header-charts">
+        </div>
+        <app-progress-bar></app-progress-bar>
+      </div>
+
+      <!-- Contenido de la tabla de areas -->
+      <div class="table-content">
+        <app-tables-areas></app-tables-areas>
+      </div>
+
+
+      <!-- Contenido de grafica anual -->
+       <div class="container-chart-line">
+        <app-grafica-anual></app-grafica-anual>
+       </div>
+
+    </div>
+  </main>
+</div>
