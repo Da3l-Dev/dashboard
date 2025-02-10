@@ -28,7 +28,7 @@ html, body {
   flex: 1; /* Ocupa el espacio restante */
   background-color: #f8f9fa;
   margin-left: 14%; /* Margen izquierdo igual al ancho del menú */
-  max-height: 100%; /* Altura completa */
+  height: 100%; /* Altura completa */
 
 }
 
@@ -45,7 +45,7 @@ html, body {
   width: 100%;
   height: 100%;
   grid-column: 1 / 2; /* Ocupa la primera columna */
-  grid-row: 1 / 3; /* Ocupa dos filas */
+  grid-row: 1 / 2; 
   padding: 0.2rem;
 }
 
@@ -54,6 +54,14 @@ html, body {
   height: 100%;
   grid-column: 2 / 4; /* Ocupa la segunda y tercera columna */
   padding: 0.2rem;
+}
+
+.content-card-info{
+  width: 100%;
+  height: 100%;
+
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
 }
 
 .container-chart-line {
@@ -68,3 +76,4 @@ html, body {
   max-height: 2rem;
   background-color: aqua;
 }
+

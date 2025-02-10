@@ -2,7 +2,7 @@
 .container-card-chart{
     display: grid;
     width: 100%;
-    height: auto; 
+    height: 100%; 
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 }
@@ -11,6 +11,7 @@
     background-color: #ffffff !important;
     color: #000000 !important;
     font-family: "Plus Jakarta Sans", serif !important;
+    height: 100%;
   }
 ::ng-deep .p-card .p-card-title{
     text-align: center;

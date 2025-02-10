@@ -9,6 +9,7 @@ import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { TablesAreasComponent } from './tables-areas/tables-areas.component';
 import { AsideMenuComponent } from './aside-menu/aside-menu.component';
 import { GraficaAnualComponent } from './grafica-anual/grafica-anual.component';
+import { CardInfoComponent } from './card-info/card-info.component';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ import { GraficaAnualComponent } from './grafica-anual/grafica-anual.component';
     AsideMenuComponent,
     GraficaAnualComponent,
     StyleClassModule,
+    CardInfoComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

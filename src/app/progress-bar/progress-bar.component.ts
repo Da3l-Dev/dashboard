@@ -13,7 +13,7 @@ export class ProgressBarComponent implements OnInit {
   private options = {
     chart: {
       width:190,
-      height: 160,
+      height:300,
       type: "radialBar"
     },
     
@@ -23,7 +23,7 @@ export class ProgressBarComponent implements OnInit {
       radialBar: {
         hollow: {
           margin: 0,
-          size: "60%"
+          size: "70%"
         },
        
         dataLabels: {
