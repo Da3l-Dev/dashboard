@@ -1,5 +1,5 @@
 <p-table
-  [value]="data"
+  [value]="datos"
   [scrollable]="true"
   scrollHeight="20rem"
   scrollWidth="60rem"
@@ -11,17 +11,17 @@
       <th>Unidad Operativa</th>
       <th>Indicadores Finalizados</th>
       <th>Indicadores Faltantes</th>
-      <th>Total de Avance</th>
+      <th>Estatus</th>
     </tr>
   </ng-template>
 
   <!-- Cuerpo de la tabla -->
-  <ng-template pTemplate="body" let-item>
+  <ng-template #body let-datos>
     <tr>
-      <td>{{ item.unidadOperativa }}</td>
-      <td>{{ item.indicadoresFinalizados }}</td>
-      <td>{{ item.indicadoresFaltantes }}</td>
-      <td>{{ item.totalAvance }}</td>
+      <td>{{ datos.cUnidadOperante }}</td>
+      <td></td>
+      <td></td>
+      <td><p-tag class="tag-custom danger" severity="danger" value="Falta" [rounded]="true" /></td>
     </tr>
   </ng-template>
 </p-table>

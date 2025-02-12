@@ -7,9 +7,16 @@
     gap: .2rem;
 }
 
+
 .card{
-    padding: 2rem;
     border-radius: 1rem;
+}
+
+.card-header{
+    background: #fff;
+    border: none;
+    font-family: "Plus Jakarta Sans", serif;
+    font-size: 1rem;
 }
 
 .card-1{
@@ -43,3 +50,8 @@
     grid-row: 2/ 3; 
 }
 
+h2{
+    font-size: .8rem;
+    text-align: center;
+    background: #fff;
+}

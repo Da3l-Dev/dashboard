@@ -3,6 +3,7 @@
     width: 100% !important; /* Asegura que la tabla ocupe el 100% del contenedor */
     height: 100% !important;
     background-color: #ffffff;
+    border: none !important;
   }
   
   :host ::ng-deep .p-datatable-table {
@@ -17,7 +18,7 @@
     color: #000000 !important;
     border: none !important; /* Elimina los bordes de las celdas */
     font-size: 0.91rem !important;
-    text-align: center !important;
+    text-align: justify !important;
     font-weight: normal !important;
     padding: 0.6rem !important;
   }
@@ -39,6 +40,19 @@
     background-color: #ffffff;
   }
   
+  :host ::ng-deep .tag-custom{
+    font-family: "Plus Jakarta Sans", serif !important;
+    font-size: 10px !important;
+    color: #fff !important;
+  }
+  
+  :host ::ng-deep .danger{
+    background: #f45555 !important;
+  }
+  
+  :host ::ng-deep .tag-custom{
+    font-size: 10px !important;
+  }
   /* Estilos adicionales */
   .white-table {
     background-color: #ffffff !important;

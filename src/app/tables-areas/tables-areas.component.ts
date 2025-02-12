@@ -1,47 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
+import { ObtenerdatosService } from '../services/obtenerdatos.service';
+import { response } from 'express';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Tag } from 'primeng/tag';
+import { SharedDataService } from '../services/shared-data.service';
 
 
 @Component({
   selector: 'app-tables-areas',
-  imports: [TableModule],
+  imports: [TableModule,
+    HttpClientModule,
+    Tag,
+  ],
   standalone: true,
   templateUrl: './tables-areas.component.html',
   styleUrl: './tables-areas.component.scss'
 })
-export class TablesAreasComponent {
 
-  data = [
-    {
-      unidadOperativa: 'Direccion General de Educacion Especial',
-      indicadoresFinalizados: 10,
-      indicadoresFaltantes: 20,
-      totalAvance: '10%'
-    },
-    {
-      unidadOperativa: 'Direccion General de Educacion Especial',
-      indicadoresFinalizados: 10,
-      indicadoresFaltantes: 20,
-      totalAvance: '10%'
-    },
-    {
-      unidadOperativa: 'Direccion General de Educacion Especial',
-      indicadoresFinalizados: 10,
-      indicadoresFaltantes: 20,
-      totalAvance: '10%'
-    },
-    {
-      unidadOperativa: 'Direccion General de Educacion Especial',
-      indicadoresFinalizados: 10,
-      indicadoresFaltantes: 20,
-      totalAvance: '10%'
-    },
-    {
-      unidadOperativa: 'Direccion General de Educacion Especial',
-      indicadoresFinalizados: 10,
-      indicadoresFaltantes: 20,
-      totalAvance: '10%'
-    },
-    // puedes agregar más filas aquí
-  ];
+export class TablesAreasComponent implements OnInit{
+  datos: any[] = [];
+
+  constructor (
+    private dataService: ObtenerdatosService,
+    private sharedData: SharedDataService
+  ){}
+  ngOnInit(): void {
+    this.sharedData.arregloAreas$.subscribe(data => {
+      this.datos = data;
+    })
+  }
+
 }
