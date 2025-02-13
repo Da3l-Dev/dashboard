@@ -51,6 +51,31 @@ export class AppComponent implements OnInit {
   totalCausaTerminadaTrim3: number = 0;
   totalCausaTerminadaTrim4: number = 0;
 
+  // Total de efectos terminados por trimestre
+  totalEfectoTerminadaTrim1: number = 0;
+  totalEfectoTerminadaTrim2: number = 0;
+  totalEfectoTerminadaTrim3: number = 0;
+  totalEfectoTerminadaTrim4: number = 0;
+
+  // Total de evidencias terminadas por trimestre
+  totalEvidenciasTerminadasTrim1: number = 0;
+  totalEvidenciasTerminadasTrim2: number = 0;
+  totalEvidenciasTerminadasTrim3: number = 0;
+  totalEvidenciasTerminadasTrim4: number = 0;
+
+  // Total de obs1 terminados por trimestre
+  totalObs1TerminadasTrim1: number = 0;
+  totalObs1TerminadasTrim2: number = 0;
+  totalObs1TerminadasTrim3: number = 0;
+  totalObs1TerminadasTrim4: number = 0;
+
+  // Total de obs2 terminados por trimestre
+  totalObs2TerminadasTrim1: number = 0;
+  totalObs2TerminadasTrim2: number = 0;
+  totalObs2TerminadasTrim3: number = 0;
+  totalObs2TerminadasTrim4: number = 0;
+
+
   datosGlobales: any[] = [];
   datosTrimestre: any[] = [];
   areas: any[] = [];
@@ -68,7 +93,7 @@ export class AppComponent implements OnInit {
       // Ingresar el conteo de todos los elementos a un arreglo para datos globales
       this.datosGlobales.push({
         TotalComponentes: this.totalDeComponentes,
-        TotalActividades: this.totalDeActividades
+        TotalActividades: this.totalDeActividades,
       }
       );
 
@@ -77,26 +102,45 @@ export class AppComponent implements OnInit {
         trimestre: 1,
         totalLogros: this.totalLogrosTrim1,
         totalCuasaTrim1: this.totalCausaTerminadaTrim1,
+        totalEfectoTrim1: this.totalEfectoTerminadaTrim1,
+        totalEvidenciaTrim1: this.totalEvidenciasTerminadasTrim1,
+        totalObs1Trim1: this.totalObs1TerminadasTrim1,
+        totalObs2Trim1: this.totalObs2TerminadasTrim1
       },
       {
         trimestre: 2,
         totalLogros: this.totalLogrosTrim2,
-        totalCuasaTrim1: this.totalCausaTerminadaTrim2,
+        totalCuasaTrim2: this.totalCausaTerminadaTrim2,
+        totalEfectoTrim2: this.totalEfectoTerminadaTrim2,
+        totalEvidenciaTrim2: this.totalEvidenciasTerminadasTrim2,
+        totalObs1Trim2: this.totalObs1TerminadasTrim2,
+        totalObs2Trim2: this.totalObs2TerminadasTrim2
       },
       {
         trimestre: 3,
         totalLogros: this.totalLogrosTrim3,
-        totalCuasaTrim1: this.totalCausaTerminadaTrim3,
+        totalCuasaTrim3: this.totalCausaTerminadaTrim3,
+        totalEfectoTrim3: this.totalEfectoTerminadaTrim3,
+        totalEvidenciaTrim3: this.totalEvidenciasTerminadasTrim3,
+        totalObs1Trim3: this.totalObs1TerminadasTrim3,
+        totalObs2Trim3: this.totalObs2TerminadasTrim3
       },
       {
         trimestre: 4,
         totalLogros: this.totalLogrosTrim4,
-        totalCuasaTrim1: this.totalCausaTerminadaTrim4,
+        totalCuasaTrim4: this.totalCausaTerminadaTrim4,
+        totalEfectoTrim4: this.totalEfectoTerminadaTrim4,
+        totalEvidenciaTrim4: this.totalEvidenciasTerminadasTrim4,
+        totalObs1Trim4: this.totalObs1TerminadasTrim4,
+        totalObs2Trim4: this.totalObs2TerminadasTrim4
       },
   
-    )
+    );
 
-      console.log(this.datosTrimestre);
+    console.log(this.datosTrimestre)
+
+
+
       // Compartir los datos a los componentes de angular
       this.sharedData.setArregloGlobal(this.datosGlobales);
       this.sharedData.setArregloAreas(this.areas);
@@ -121,7 +165,6 @@ export class AppComponent implements OnInit {
         // Obtener Logros de cada area para poder hacer un analisis
         const logros = await lastValueFrom(this.datosProyecto.getDataLogros(idArea));
 
-  
 
         await this.analisisDatos(logros);
 
@@ -147,28 +190,90 @@ export class AppComponent implements OnInit {
 
   async analisisDatos(logrosData: any[]): Promise<void>{
     logrosData.forEach(element => {
+
+      // Primer Trimestre
       if(element.idTrimestre === 1){
         this.totalLogrosTrim1 += 1;
         if(element.causa != null){
           this.totalCausaTerminadaTrim1 += 1;
         }
+        
+        if(element.efecto != null){
+          this.totalEfectoTerminadaTrim1 += 1;
+        }
+        
+        if(element.evidencia != null){
+          this.totalEvidenciasTerminadasTrim1 += 1;
+        }
+        
+        if(element.obs1 != null){
+          this.totalObs1TerminadasTrim1 += 1;
+        }
+        
+        if(element.obs2 != null){
+          this.totalObs2TerminadasTrim1 += 1;
+        }
       }
+
+      // Segundo Trimestre
       else if(element.idTrimestre === 2){
         this.totalLogrosTrim2 += 1;
         if(element.causa != null){
           this.totalCausaTerminadaTrim2 += 1;
         }
-      }
-      else if(element.idTrimestre === 3){
-        this.totalLogrosTrim3 += 1;
-        if(element.causa != null){
-          this.totalCausaTerminadaTrim3 += 1;
+
+        if(element.efecto != null){
+          this.totalEfectoTerminadaTrim2 +=1;
+        }
+        if(element.evidencia != null){
+          this.totalEvidenciasTerminadasTrim2 += 1;
+        }
+        if(element.obs1 != null){
+          this.totalObs1TerminadasTrim2 += 1;
+        }
+        if(element.obs2 != null){
+          this.totalObs2TerminadasTrim2 += 1;
         }
       }
+
+      // Tercer Trimestre
+      else if(element.idTrimestre === 3){
+        this.totalLogrosTrim3 += 1;
+        if(!(element.causa === null)){
+          this.totalCausaTerminadaTrim3 += 1;
+        }
+        if(!(element.efecto != null)){
+          this.totalEfectoTerminadaTrim3 +=1;
+        }
+        if(!(element.evidencia != null)){
+          this.totalEvidenciasTerminadasTrim3 += 1;
+        }
+        if(element.obs1 != null){
+          this.totalObs1TerminadasTrim3 += 1;
+        }
+        if(element.obs2 != null){
+          this.totalObs2TerminadasTrim3 += 1;
+        }
+      }
+
+      // Cuarto Trimestre
       else if(element.idTrimestre === 4){
         this.totalLogrosTrim4 += 1;
         if(element.causa != null){
           this.totalCausaTerminadaTrim4 += 1;
+        }
+
+        if(element.efecto != null){
+          this.totalEfectoTerminadaTrim4 +=1;
+        }
+        if(element.evidencia != null){
+          this.totalEvidenciasTerminadasTrim4 += 1;
+        }
+        if(element.obs1 != null){
+          this.totalObs1TerminadasTrim4 += 1;
+        }
+        if(element.obs2 != null){
+          this.totalObs2TerminadasTrim4 += 1;
         }
       }
     });
