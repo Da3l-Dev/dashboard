@@ -36,6 +36,7 @@ export class AppComponent implements OnInit {
     private sharedData: SharedDataService,
   ) {}
 
+  totalDeAreas: number = 0;
   totalDeComponentes: number = 0;
   totalDeActividades: number = 0;
 
@@ -78,26 +79,28 @@ export class AppComponent implements OnInit {
 
   datosGlobales: any[] = [];
   datosTrimestre: any[] = [];
+  datosArea: any [] = [];
   areas: any[] = [];
 
   // Método inicial para obtener los datos
   async ngOnInit(): Promise<void> {
     try {
-      // Obtener las áreas usando lastValueFrom
+      // Obtener las áreas
       this.areas = await lastValueFrom(this.datosProyecto.getAllAreas());
 
-
+      this.totalDeAreas = this.areas.length;
       // Realizar el conteo de componentes y actividades
       await this.conteoElementos(this.areas);
-
-      // Ingresar el conteo de todos los elementos a un arreglo para datos globales
+  
+      // Guardar datos globales
       this.datosGlobales.push({
+        TotalAreas: this.totalDeAreas,
         TotalComponentes: this.totalDeComponentes,
         TotalActividades: this.totalDeActividades,
-      }
-      );
-
-
+        trimestre: 1,
+      });
+  
+      // Guardar datos trimestrales
       this.datosTrimestre.push({
         trimestre: 1,
         totalLogros: this.totalLogrosTrim1,
@@ -134,20 +137,22 @@ export class AppComponent implements OnInit {
         totalObs1Trim4: this.totalObs1TerminadasTrim4,
         totalObs2Trim4: this.totalObs2TerminadasTrim4
       },
-  
     );
-
-    console.log(this.datosTrimestre)
-
-
-
-      // Compartir los datos a los componentes de angular
-      this.sharedData.setArregloGlobal(this.datosGlobales);
+    
+      // Enviar datos a SharedDataService
       this.sharedData.setArregloAreas(this.areas);
+      this.sharedData.setArregloDataAreas(this.datosArea);
+      this.sharedData.setArregloGlobal(this.datosGlobales);
+
+  
+      console.log('Datos enviados a SharedDataService');
+  
     } catch (error) {
       console.error('Error al obtener los datos:', error);
     }
   }
+  
+  
 
   // Función para establecer el conteo total de componentes y actividades
   async conteoElementos(areas: any[]): Promise<void> {
@@ -156,12 +161,20 @@ export class AppComponent implements OnInit {
     // Recorrer todas las áreas y obtener sus datos
     for (const element of areas) {
       const idArea = element.idArea;
-
+    
       try {
         // Obtener los datos de los proyectos para el área actual usando lastValueFrom
         const datos = await lastValueFrom(this.datosProyecto.getDataProyects(idArea, year));
 
+        let total = datos.length;
 
+        this.datosArea.push({
+          idArea: element.idArea,
+          cUnidadOperativa: element.cUnidadOperante,
+          totalIndicadores: total,
+        })
+
+        total = 0;
         // Obtener Logros de cada area para poder hacer un analisis
         const logros = await lastValueFrom(this.datosProyecto.getDataLogros(idArea));
 
@@ -183,6 +196,7 @@ export class AppComponent implements OnInit {
         console.error(`Error al obtener datos para el área ${idArea}:`, error);
       }
     }
+
   }
 
 

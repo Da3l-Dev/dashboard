@@ -19,6 +19,7 @@
     border: none !important; /* Elimina los bordes de las celdas */
     font-size: 0.91rem !important;
     text-align: justify !important;
+    text-wrap: pretty !important;
     font-weight: normal !important;
     padding: 0.6rem !important;
   }
@@ -38,6 +39,7 @@
   :host ::ng-deep tr {
     border: none !important; /* Elimina los bordes de las filas */
     background-color: #ffffff;
+  
   }
   
   :host ::ng-deep .tag-custom{
@@ -50,11 +52,33 @@
     background: #f45555 !important;
   }
   
-  :host ::ng-deep .tag-custom{
-    font-size: 10px !important;
-  }
   /* Estilos adicionales */
   .white-table {
     background-color: #ffffff !important;
     color: #000;
+  }
+
+  :host ::ng-deep .data--center{
+    text-align: center !important;
+  }
+  :host ::ng-deep .data--unidad{
+    max-width: 300px;
+  }
+  
+  :host ::ng-deep .data--status{
+    max-width: 200px;
+  }
+
+  .tag-message{
+    text-align: center;
+    color: #fff; 
+    font-size: 10px;
+  }
+  
+
+  .loading-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 2rem;
   }

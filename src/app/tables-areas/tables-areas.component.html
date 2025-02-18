@@ -1,5 +1,6 @@
 <p-table
-  [value]="datos"
+  *ngIf="datosCargados"
+  [value]="datosTrim"
   [scrollable]="true"
   scrollHeight="20rem"
   scrollWidth="60rem"
@@ -16,12 +17,21 @@
   </ng-template>
 
   <!-- Cuerpo de la tabla -->
-  <ng-template #body let-datos>
+  <ng-template pTemplate="body" let-datosTrim>
     <tr>
-      <td>{{ datos.cUnidadOperante }}</td>
-      <td></td>
-      <td></td>
-      <td><p-tag class="tag-custom danger" severity="danger" value="Falta" [rounded]="true" /></td>
+      <td class="data--unidad">{{ datosTrim.UnidadOperante }}</td>
+      <td class="data--center">{{ datosTrim.totalIndicadoresTerm }}</td>
+      <td class="data--center">{{ datosTrim.totalIndicadoresFaltantes }}</td>
+      <td class="data--status">
+        <div class="tag-message">
+          <p>Falta</p>
+        </div>
+      </td>
     </tr>
   </ng-template>
 </p-table>
+
+<!-- Mensaje de carga -->
+<div *ngIf="!datosCargados" class="loading-message">
+  Cargando datos...
+</div>
