@@ -6,7 +6,6 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Tag } from 'primeng/tag';
 import { SharedDataService } from '../services/shared-data.service';
 import { elementAt, lastValueFrom } from 'rxjs';
-import { log } from 'console';
 import { CommonModule } from '@angular/common';
 
 
