@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import ApexCharts from 'apexcharts';
+import { SharedDataService } from '../services/shared-data.service';
 
 
 @Component({
@@ -9,6 +10,8 @@ import ApexCharts from 'apexcharts';
   styleUrl: './grafica-anual.component.scss'
 })
 export class GraficaAnualComponent implements OnInit {
+  constructor(private sharedData: SharedDataService){}
+
   private options = {
     series: [{
     name: 'series1',
@@ -38,6 +41,7 @@ export class GraficaAnualComponent implements OnInit {
   };
 
   ngOnInit(): void {
+
     const chart = new ApexCharts(document.querySelector("#grafica-anual"), this.options);
     chart.render();
   }

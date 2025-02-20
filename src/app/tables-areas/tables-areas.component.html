@@ -23,9 +23,10 @@
       <td class="data--center">{{ datosTrim.totalIndicadoresTerm }}</td>
       <td class="data--center">{{ datosTrim.totalIndicadoresFaltantes }}</td>
       <td class="data--status">
-        <div class="tag-message tg--danger">
-          <p class="danger">Falta</p>
-        </div>
+        <!-- Mostrar el estatus según las condiciones -->
+        <p *ngIf="datosTrim.totalIndicadoresFaltantes === 0" class="tag success">Terminado</p>
+        <p *ngIf="datosTrim.totalIndicadoresFaltantes > 0 && datosTrim.totalIndicadoresTerm > datosTrim.totalIndicadoresFaltantes" class="tag warning">En progreso</p>
+        <p *ngIf="datosTrim.totalIndicadoresFaltantes > 0 && datosTrim.totalIndicadoresTerm <= datosTrim.totalIndicadoresFaltantes" class="tag danger">En peligro</p>
       </td>
     </tr>
   </ng-template>

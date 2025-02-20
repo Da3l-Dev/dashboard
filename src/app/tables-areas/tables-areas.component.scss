@@ -41,6 +41,7 @@
     background-color: #ffffff;
   
   }
+
   
   :host ::ng-deep .tag-custom{
     font-family: "Plus Jakarta Sans", serif !important;
@@ -65,9 +66,7 @@
     max-width: 300px;
   }
   
-  :host ::ng-deep .data--status{
-    max-width: 200px;
-  }
+
 
   .tag-message{
     text-align: center;
@@ -83,9 +82,23 @@
     margin-top: 2rem;
   }
 
-  .danger{
-    padding: 0;
-    width: 100%;
+  .tag {
+    color: #fff;
+    text-align: center;
     border-radius: 5px;
-    background-color: red;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    margin: 0;
+  }
+  
+  .success {
+    background-color: #28a745; /* Verde */
+  }
+  
+  .warning {
+    background-color: #ffc107; /* Amarillo */
+  }
+  
+  .danger {
+    background-color: #dc3545; /* Rojo */
   }

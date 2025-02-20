@@ -88,6 +88,7 @@ export class AppComponent implements OnInit {
       // Obtener las áreas
       this.areas = await lastValueFrom(this.datosProyecto.getAllAreas());
 
+      
       this.totalDeAreas = this.areas.length;
       // Realizar el conteo de componentes y actividades
       await this.conteoElementos(this.areas);
@@ -157,6 +158,7 @@ export class AppComponent implements OnInit {
   // Función para establecer el conteo total de componentes y actividades
   async conteoElementos(areas: any[]): Promise<void> {
     const year = 2024;
+    let tipoIndicador: number = 0;
 
     // Recorrer todas las áreas y obtener sus datos
     for (const element of areas) {
@@ -165,6 +167,7 @@ export class AppComponent implements OnInit {
       try {
         // Obtener los datos de los proyectos para el área actual usando lastValueFrom
         const datos = await lastValueFrom(this.datosProyecto.getDataProyects(idArea, year));
+
 
         let total = datos.length;
 
@@ -177,7 +180,9 @@ export class AppComponent implements OnInit {
         total = 0;
         // Obtener Logros de cada area para poder hacer un analisis
         const logros = await lastValueFrom(this.datosProyecto.getDataLogros(idArea));
+        
 
+        
 
         await this.analisisDatos(logros);
 
@@ -204,6 +209,7 @@ export class AppComponent implements OnInit {
 
   async analisisDatos(logrosData: any[]): Promise<void>{
     logrosData.forEach(element => {
+
 
       // Primer Trimestre
       if(element.idTrimestre === 1){

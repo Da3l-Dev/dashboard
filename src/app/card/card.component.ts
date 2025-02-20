@@ -12,6 +12,9 @@ export class CardComponent implements OnInit{
 
   areasFinalizadas: number = 0;
   areasFaltantes: number = 0;
+  componentesFinalizados: number = 0;
+  actividadesFinalizadas: number = 0;
+
 
   dataTotales: any [] = [];
 
@@ -22,6 +25,8 @@ export class CardComponent implements OnInit{
 
         this.areasFinalizadas = this.dataTotales[0].totalAreasCulminadas;
         this.areasFaltantes = this.dataTotales[0].totalAreasFaltantes;
+        this.componentesFinalizados = this.dataTotales[0].totalComponentesTerminados;
+        this.actividadesFinalizadas = this.dataTotales[0].totalActividadesTerminados;
       }
     });
   }
