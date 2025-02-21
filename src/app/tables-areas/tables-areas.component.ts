@@ -149,6 +149,8 @@ export class TablesAreasComponent implements OnInit {
         console.error(`Error al obtener logros para el área ${area.idArea}:`, error);
       }
     }
+
+    this.sharedData.setDatosTrim(this.datosTrim);
   
     // Ordenar los datos según el orden deseado
     this.datosTrim.sort((a, b) => {

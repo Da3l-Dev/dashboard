@@ -27,6 +27,8 @@ export class SharedDataService {
 
   
 
+  private areasDatosTrim = new BehaviorSubject<any[]>([]);
+  areasDatosTrim$ = this.areasDatosTrim.asObservable();
 
   setArregloAreas(data: any[]){
     this.ArregloAreas.next(data);
@@ -40,8 +42,11 @@ export class SharedDataService {
     this.ArregloDataArea.next(data);
   }
 
-
   setDataTotales(data: any[]){
     this.DataTotales.next(data);
+  }
+
+  setDatosTrim(data: any[]){
+    this.areasDatosTrim.next(data);
   }
 }
