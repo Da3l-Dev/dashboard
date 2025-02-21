@@ -30,23 +30,23 @@ export class SharedDataService {
   private areasDatosTrim = new BehaviorSubject<any[]>([]);
   areasDatosTrim$ = this.areasDatosTrim.asObservable();
 
-  setArregloAreas(data: any[]){
+  setArregloAreas(data: any[]): void{
     this.ArregloAreas.next(data);
   }
 
-  setArregloGlobal(data: any[]){
+  setArregloGlobal(data: any[]): void{
     this.ArregloGlobal.next(data);
   }
 
-  setArregloDataAreas(data: any[]){
+  setArregloDataAreas(data: any[]): void{
     this.ArregloDataArea.next(data);
   }
 
-  setDataTotales(data: any[]){
+  setDataTotales(data: any[]): void{
     this.DataTotales.next(data);
   }
 
-  setDatosTrim(data: any[]){
+  setDatosTrim(data: any[]): void{
     this.areasDatosTrim.next(data);
   }
 }

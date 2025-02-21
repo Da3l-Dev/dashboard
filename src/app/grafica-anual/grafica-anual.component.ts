@@ -70,19 +70,13 @@ export class GraficaAnualComponent implements OnInit {
         }
       ],
       chart: {
+        fontFamily: 'Plus Jakarta Sans , serif',
         type: 'bar',
-        height: 400,
+        height: 450,
         stacked: true,
-        toolbar: {
-          show: true
-        },
-        zoom: {
-          enabled: true
-        }
       },
       responsive: [
         {
-          breakpoint: 480,
           options: {
             legend: {
               position: 'bottom',
@@ -90,8 +84,8 @@ export class GraficaAnualComponent implements OnInit {
               offsetY: 0,
               verticalAlign: 'middle',
               itemMargin: {
-                horizontal: 5,
-                vertical: 5
+                horizontal: 10,
+                vertical: 10
               }
             }
           }
@@ -100,13 +94,13 @@ export class GraficaAnualComponent implements OnInit {
       plotOptions: {
         bar: {
           horizontal: false,
-          borderRadius: 10,
+          borderRadius: 5,
           dataLabels: {
             total: {
               enabled: true,
               style: {
                 fontSize: '11px',
-                fontWeight: 200
+                fontWeight: 700
               }
             }
           }

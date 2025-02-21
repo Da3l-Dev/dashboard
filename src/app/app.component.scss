@@ -65,9 +65,9 @@ html, body {
 .container-chart-line {
   grid-column: 2 / 4; /* Ocupa la segunda y tercera columna */
   grid-row: 2 ;
-  max-height: 100%; /* Ocupa la segunda fila */
   margin: 0;
   padding: 0;
+  background-color: #fff;
 }
 
 .header-charts {
