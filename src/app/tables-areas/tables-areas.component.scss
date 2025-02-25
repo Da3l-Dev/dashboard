@@ -102,3 +102,57 @@
   .danger {
     background-color: #dc3545; /* Rojo */
   }
+
+
+
+  /* Animación de fade-in para que los datos aparezcan suavemente */
+.fade-in {
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInAnimation 0.5s ease-out forwards;
+}
+
+@keyframes fadeInAnimation {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Skeleton Loader (Esqueleto de carga) */
+.skeleton-container {
+  width: 100%;
+  padding: 10px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-header {
+  height: 20px;
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.skeleton-row {
+  height: 15px;
+  width: 100%;
+  margin: 5px 0;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

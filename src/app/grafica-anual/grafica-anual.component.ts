@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import ApexCharts from 'apexcharts';
 import { SharedDataService } from '../services/shared-data.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-grafica-anual',
@@ -8,64 +9,66 @@ import { SharedDataService } from '../services/shared-data.service';
   templateUrl: './grafica-anual.component.html',
   styleUrl: './grafica-anual.component.scss'
 })
-export class GraficaAnualComponent implements OnInit {
+export class GraficaAnualComponent implements OnInit, OnDestroy {
   constructor(private sharedData: SharedDataService) {}
 
-  dataAreas: any[] = [];
   datos: any[] = [];
+  categorias: string[] = [];
+  indicadoresTerminados: number[] = [];
+  indicadoresFaltantes: number[] = [];
 
-  categorias: any[] = [];
-  indicadoresTerminados: any[] = [];
-  indicadoresFaltantes: any[] = [];
-
-  chart: ApexCharts | null = null; // Variable para almacenar la instancia de la gráfica
+  chart: ApexCharts | null = null;
+  datosCargados: boolean = false; // Bandera para manejar la carga
+  private dataSubscription: Subscription | undefined;
 
   ngOnInit(): void {
-    this.sharedData.areasDatosTrim$.subscribe(data => {
+    this.dataSubscription = this.sharedData.areasDatosTrim$.subscribe(data => {
       if (data.length > 0) {
         this.datos = data;
+        this.datosCargados = false; // Iniciar la carga
 
-        // Limpiar arrays antes de agregar nuevos datos
-        this.categorias = [];
-        this.indicadoresTerminados = [];
-        this.indicadoresFaltantes = [];
-
-        this.datos.forEach(element => {
-          // Dividir la cadena en palabras
-          const palabras = element.UnidadOperante.split(' ');
-          const indTerm = element.totalIndicadoresTerm;
-          const indFaltantes = element.totalIndicadoresFaltantes;
-
-          // Tomar las últimas dos palabras
-          const ultimasDosPalabras = palabras.slice(-1).join(' ');
-
-          // Agregar las últimas dos palabras al array de categorías
-          this.categorias.push(ultimasDosPalabras);
-          this.indicadoresTerminados.push(indTerm);
-          this.indicadoresFaltantes.push(indFaltantes);
-        });
-
-        this.generarGrafica(this.categorias, this.indicadoresTerminados, this.indicadoresFaltantes);
+        setTimeout(() => {
+          this.procesarDatos();
+          this.datosCargados = true; // Activar bandera cuando termine
+        }, 500); // Simulación de carga progresiva
       }
     });
   }
 
-  generarGrafica(categories: any[], indicadoresTerminados: any[], indicadoresFaltantes: any[]): void {
-    // Destruir la gráfica anterior si existe
-    if (this.chart) {
-      this.chart.destroy();
-    }
+  ngOnDestroy(): void {
+    if (this.dataSubscription) this.dataSubscription.unsubscribe();
+    if (this.chart) this.chart.destroy();
+  }
 
+  private procesarDatos(): void {
+    // Limpiar arrays antes de agregar nuevos datos
+    this.categorias = [];
+    this.indicadoresTerminados = [];
+    this.indicadoresFaltantes = [];
+
+    this.datos.forEach(element => {
+      const palabras = element.UnidadOperante.split(' ');
+      const ultimasDosPalabras = palabras.slice(-1).join(' '); // Tomar última palabra
+
+      this.categorias.push(ultimasDosPalabras);
+      this.indicadoresTerminados.push(element.totalIndicadoresTerm);
+      this.indicadoresFaltantes.push(element.totalIndicadoresFaltantes);
+    });
+
+    this.actualizarGrafica();
+  }
+
+  private actualizarGrafica(): void {
     const options2 = {
       series: [
         {
           name: 'Indicadores Terminados',
-          data: indicadoresTerminados,
+          data: this.indicadoresTerminados,
           color: '#00E396'
         },
         {
           name: 'Indicadores Faltantes',
-          data: indicadoresFaltantes,
+          data: this.indicadoresFaltantes,
           color: '#FF4560'
         }
       ],
@@ -74,23 +77,12 @@ export class GraficaAnualComponent implements OnInit {
         type: 'bar',
         height: 450,
         stacked: true,
-      },
-      responsive: [
-        {
-          options: {
-            legend: {
-              position: 'bottom',
-              offsetX: -10,
-              offsetY: 0,
-              verticalAlign: 'middle',
-              itemMargin: {
-                horizontal: 10,
-                vertical: 10
-              }
-            }
-          }
+        animations: {
+          enabled: true,
+          easing: 'easeout',
+          speed: 800
         }
-      ],
+      },
       plotOptions: {
         bar: {
           horizontal: false,
@@ -107,32 +99,23 @@ export class GraficaAnualComponent implements OnInit {
         }
       },
       xaxis: {
-        categories: categories
+        categories: this.categorias
       },
       legend: {
-        position: 'top', // Posición de la leyenda a la derecha
-        horizontalAlign: 'center', // Alinear verticalmente en la parte superior
-        offsetY: 40, // Ajustar la posición vertical
-        formatter: function (seriesName: string) {
-          return seriesName; // Mostrar el nombre de la serie
-        },
-        itemMargin: {
-          horizontal: 0, // Eliminar espaciado horizontal entre elementos
-          vertical: 10 // Aumentar espaciado vertical entre elementos
-        },
-        markers: {
-          width: 12, // Ancho del marcador de la leyenda
-          height: 12, // Alto del marcador de la leyenda
-          radius: 12 // Radio del marcador de la leyenda
-        }
+        position: 'top',
+        horizontalAlign: 'center',
+        offsetY: 40
       },
       fill: {
         opacity: 1
       }
     };
 
-    // Crear una nueva instancia de la gráfica
-    this.chart = new ApexCharts(document.querySelector("#grafica-anual"), options2);
-    this.chart.render();
+    if (!this.chart) {
+      this.chart = new ApexCharts(document.querySelector("#grafica-anual"), options2);
+      this.chart.render();
+    } else {
+      this.chart.updateOptions(options2);
+    }
   }
 }

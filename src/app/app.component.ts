@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CardComponent } from "./card/card.component";
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
@@ -9,8 +9,8 @@ import { CardInfoComponent } from './card-info/card-info.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ObtenerdatosService } from './services/obtenerdatos.service';
 import { SharedDataService } from './services/shared-data.service';
-import { lastValueFrom } from 'rxjs'; // Importa lastValueFrom
-import { log } from 'console';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +30,9 @@ import { log } from 'console';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  private intervalSubscription: Subscription | undefined;
+
   constructor(
     private datosProyecto: ObtenerdatosService,
     private sharedData: SharedDataService,
@@ -81,33 +83,58 @@ export class AppComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     // Ejecutar la función inmediatamente al iniciar
     await this.obtenerDatos();
+
+    // Ejecutar la función cada hora (3600000 ms)
+    this.intervalSubscription = interval(3600000).subscribe(() => {
+      this.obtenerDatos();
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Limpiar la suscripción al intervalo cuando el componente se destruye
+    if (this.intervalSubscription) {
+      this.intervalSubscription.unsubscribe();
+    }
   }
 
   // Función para obtener y procesar los datos
   async obtenerDatos(): Promise<void> {
     try {
-      console.log("obteniendo datos");
-      // Reiniciar todas las variables antes de comenzar un nuevo cálculo
+      console.log("Obteniendo datos...");
+  
+      // Reiniciar variables antes de calcular nuevos datos
       this.reiniciarVariables();
-
+  
+      // Obtener el trimestre actual desde SharedDataService o usar 1 si no hay datos
+      let trimestreActual = 1;
+      
+      try {
+        const globalData = await firstValueFrom(this.sharedData.arregloGlobal$);
+        if (globalData && globalData.length > 0 && globalData[0].trimestre) {
+          trimestreActual = globalData[0].trimestre; // Mantiene el trimestre seleccionado
+        }
+      } catch (error) {
+        console.warn("No se pudo obtener el trimestre, usando el valor por defecto (1).");
+      }
+  
       // Obtener las áreas
       this.areas = await lastValueFrom(this.datosProyecto.getAllAreas());
-
       this.totalDeAreas = this.areas.length;
-
+  
       // Realizar el conteo de componentes y actividades
       await this.conteoElementos(this.areas);
-
-      // Guardar datos globales
-      this.datosGlobales.push({
+  
+      // Guardar datos globales con el trimestre correcto
+      this.datosGlobales = [{
         TotalAreas: this.totalDeAreas,
         TotalComponentes: this.totalDeComponentes,
         TotalActividades: this.totalDeActividades,
-        trimestre: 1,
-      });
-
+        trimestre: trimestreActual, // Mantener el trimestre seleccionado
+      }];
+  
+  
       // Guardar datos trimestrales
-      this.datosTrimestre.push(
+      this.datosTrimestre = [
         {
           trimestre: 1,
           totalLogros: this.totalLogrosTrim1,
@@ -144,18 +171,20 @@ export class AppComponent implements OnInit {
           totalObs1Trim4: this.totalObs1TerminadasTrim4,
           totalObs2Trim4: this.totalObs2TerminadasTrim4,
         }
-      );
-
+      ];
+  
       // Enviar datos a SharedDataService
       this.sharedData.setArregloAreas(this.areas);
       this.sharedData.setArregloDataAreas(this.datosArea);
       this.sharedData.setArregloGlobal(this.datosGlobales);
 
-      console.log('Datos enviados a SharedDataService');
+  
+      console.log('Datos enviados a SharedDataService con trimestre:', trimestreActual);
     } catch (error) {
       console.error('Error al obtener los datos:', error);
     }
   }
+  
 
   // Función para reiniciar todas las variables
   private reiniciarVariables(): void {

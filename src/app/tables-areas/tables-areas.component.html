@@ -1,12 +1,19 @@
+<!-- Mostrar el esqueleto de carga si los datos aún no están listos -->
+<div *ngIf="!datosCargados" class="skeleton-container">
+  <div class="skeleton skeleton-header"></div>
+  <div class="skeleton skeleton-row" *ngFor="let i of [].constructor(5)"></div>
+</div>
+
+<!-- Tabla con efecto de fade-in cuando los datos se cargan -->
 <p-table
   *ngIf="datosCargados"
+  class="fade-in"
   [value]="datosTrim"
   [scrollable]="true"
   scrollHeight="20rem"
   scrollWidth="60rem"
   [tableStyle]="{ 'max-width': '100%'}"
 >
-  <!-- Encabezado de la tabla -->
   <ng-template pTemplate="header">
     <tr>
       <th>Unidad Operativa</th>
@@ -16,14 +23,12 @@
     </tr>
   </ng-template>
 
-  <!-- Cuerpo de la tabla -->
   <ng-template pTemplate="body" let-datosTrim>
     <tr>
       <td class="data--unidad">{{ datosTrim.UnidadOperante }}</td>
       <td class="data--center">{{ datosTrim.totalIndicadoresTerm }}</td>
       <td class="data--center">{{ datosTrim.totalIndicadoresFaltantes }}</td>
       <td class="data--status">
-        <!-- Mostrar el estatus según las condiciones -->
         <p *ngIf="datosTrim.totalIndicadoresFaltantes === 0" class="tag success">Terminado</p>
         <p *ngIf="datosTrim.totalIndicadoresFaltantes > 0 && datosTrim.totalIndicadoresTerm > datosTrim.totalIndicadoresFaltantes" class="tag warning">En progreso</p>
         <p *ngIf="datosTrim.totalIndicadoresFaltantes > 0 && datosTrim.totalIndicadoresTerm <= datosTrim.totalIndicadoresFaltantes" class="tag danger">En peligro</p>
@@ -31,8 +36,3 @@
     </tr>
   </ng-template>
 </p-table>
-
-<!-- Mensaje de carga -->
-<div *ngIf="!datosCargados" class="loading-message">
-  Cargando datos...
-</div>

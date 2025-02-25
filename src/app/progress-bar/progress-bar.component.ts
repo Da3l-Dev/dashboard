@@ -11,45 +11,41 @@ import { SharedDataService } from '../services/shared-data.service';
   styleUrl: './progress-bar.component.scss'
 })
 export class ProgressBarComponent implements OnInit, OnDestroy {
-  constructor(
-    private sharedData: SharedDataService
-  ) {}
+  constructor(private sharedData: SharedDataService) {}
 
   dataTotales: any[] = [];
   datosGlobales: any[] = [];
-  chart1: ApexCharts | null = null; // Instancia de la gráfica 1
-  chart2: ApexCharts | null = null; // Instancia de la gráfica 2
+  porcentajeComponentes: number = 0;
+  porcentajeActividades: number = 0;
+  chart1: ApexCharts | null = null;
+  chart2: ApexCharts | null = null;
 
   ngOnInit(): void {
-    // Inicializar gráficas con 0
-    this.actualizarGrafica(0, 'chart-progress1', this.chart1);
-    this.actualizarGrafica(0, 'chart-progress2', this.chart2);
+    // Inicializar gráficas con 0%
+    this.inicializarGrafica('chart-progress1');
+    this.inicializarGrafica('chart-progress2');
 
     // Suscripción a dataTotales$
     this.sharedData.dataTotales$.subscribe(data => {
-
       if (data.length > 0) {
-        
         this.dataTotales = data;
 
-        // Suscripción a arregloGlobal$
         this.sharedData.arregloGlobal$.subscribe(globalData => {
           if (globalData.length > 0) {
             this.datosGlobales = globalData;
 
+            // Calcular los nuevos porcentajes con solo 2 decimales
+            const nuevoPorcentajeComponentes = Math.round(
+              ((this.dataTotales[0].totalComponentesTerminados / this.datosGlobales[0].TotalComponentes) * 100) * 100
+            ) / 100;
 
-            // Calcular porcentajes
-            const porcentajeComponentesTerminados = parseFloat(
-              ((this.dataTotales[0].totalComponentesTerminados / this.datosGlobales[0].TotalComponentes) * 100).toFixed(2)
-            );
+            const nuevoPorcentajeActividades = Math.round(
+              ((this.dataTotales[0].totalActividadesTerminados / this.datosGlobales[0].TotalActividades) * 100) * 100
+            ) / 100;
 
-            const porcentajeActividadesTerminados = parseFloat(
-              ((this.dataTotales[0].totalActividadesTerminados / this.datosGlobales[0].TotalActividades) * 100).toFixed(2)
-            );
-
-            // Actualizar gráficas con los nuevos valores
-            this.actualizarGrafica(porcentajeComponentesTerminados, 'chart-progress1', this.chart1);
-            this.actualizarGrafica(porcentajeActividadesTerminados, 'chart-progress2', this.chart2);
+            // Actualizar valores con transición progresiva más fluida
+            this.incrementarProgresivamente(nuevoPorcentajeComponentes, 'chart-progress1', 'componentes');
+            this.incrementarProgresivamente(nuevoPorcentajeActividades, 'chart-progress2', 'actividades');
           }
         });
       }
@@ -57,29 +53,21 @@ export class ProgressBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Destruir gráficas al salir del componente
-    if (this.chart1) {
-      this.chart1.destroy();
-    }
-    if (this.chart2) {
-      this.chart2.destroy();
-    }
+    if (this.chart1) this.chart1.destroy();
+    if (this.chart2) this.chart2.destroy();
   }
 
-  actualizarGrafica(porcentaje: number, elementId: string, chartInstance: ApexCharts | null): void {
-    // Destruir la gráfica anterior si existe
-    if (chartInstance) {
-      chartInstance.destroy();
-    }
-
-    // Opciones de la gráfica
+  /**
+   * Inicializa las gráficas con 0% para evitar recargas bruscas
+   */
+  inicializarGrafica(elementId: string): void {
     const options = {
       chart: {
         width: 190,
         height: 300,
         type: "radialBar",
       },
-      series: [porcentaje], // Usar el porcentaje proporcionado
+      series: [0], // Comienza en 0
       plotOptions: {
         radialBar: {
           hollow: {
@@ -109,15 +97,43 @@ export class ProgressBarComponent implements OnInit, OnDestroy {
       labels: [" "],
     };
 
-    // Renderizar la nueva gráfica
     const chart = new ApexCharts(document.querySelector(`#${elementId}`), options);
     chart.render();
 
-    // Guardar la instancia de la gráfica
     if (elementId === 'chart-progress1') {
       this.chart1 = chart;
     } else if (elementId === 'chart-progress2') {
       this.chart2 = chart;
     }
+  }
+
+  /**
+   * Incrementa los valores de la gráfica de forma progresiva y más fluida
+   */
+  incrementarProgresivamente(valorFinal: number, elementId: string, tipo: 'componentes' | 'actividades'): void {
+    let valorActual = tipo === 'componentes' ? this.porcentajeComponentes : this.porcentajeActividades;
+    
+    if (valorFinal === valorActual) return; // Evita actualizar si no hay cambios
+
+    const incremento = (valorFinal - valorActual) / 30; // Más fluido con 30 pasos
+    const intervalo = setInterval(() => {
+      valorActual += incremento;
+
+      if ((incremento > 0 && valorActual >= valorFinal) || (incremento < 0 && valorActual <= valorFinal)) {
+        valorActual = valorFinal;
+        clearInterval(intervalo);
+      }
+
+      // Redondear a 2 decimales
+      valorActual = Math.round(valorActual * 100) / 100;
+
+      if (tipo === 'componentes') {
+        this.porcentajeComponentes = valorActual;
+        this.chart1?.updateSeries([this.porcentajeComponentes]); // Actualiza la gráfica sin recargar
+      } else {
+        this.porcentajeActividades = valorActual;
+        this.chart2?.updateSeries([this.porcentajeActividades]); // Actualiza la gráfica sin recargar
+      }
+    }, 30); // Reduce el tiempo para mayor fluidez
   }
 }
