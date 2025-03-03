@@ -1,14 +1,31 @@
 <div class="menu-custom">
-    <!-- Iconos y logos de la sep -->
-    <div class="header-menu">
-        <img src="img/SEP_Logo_2019.svg.webp" alt="">
-    </div>
+  <!-- Iconos y logos de la sep -->
+  <div class="header-menu">
+      <img src="img/SEP_Logo_2019.svg.webp" alt="SEPH logo" title="Secretaria de Educacion Publica de Hidalgo">
+  </div>
 
-    <!-- Links -->
-    <ul class="direcciones" style="margin-top: .8rem;">
-      <li><a href="#" (click)="selectedTrimestre(1)">1er Trimestre</a></li>
-      <li><a href="#" (click)="selectedTrimestre(2)">2do Trimestre</a></li>
-      <li><a href="#" (click)="selectedTrimestre(3)">3er Trimestre</a></li>
-      <li><a href="#" (click)="selectedTrimestre(4)">4to Trimestre</a></li>
-    </ul>
+  <!-- Links -->
+  <ul class="direcciones">
+      <!-- Áreas -->
+      <li class="dropdown">
+          <a href="#" class="dropdown-btn">Áreas</a>
+          <ul class="dropdown-content">
+              <li><a href="#" (click)="selectedTrimestre(1)">1er Trimestre</a></li>
+              <li><a href="#" (click)="selectedTrimestre(2)">2do Trimestre</a></li>
+              <li><a href="#" (click)="selectedTrimestre(3)">3er Trimestre</a></li>
+              <li><a href="#" (click)="selectedTrimestre(4)">4to Trimestre</a></li>
+          </ul>
+      </li>
+
+      <!-- Seguimiento -->
+      <li class="dropdown">
+          <a href="#" class="dropdown-btn">Seguimiento</a>
+          <ul class="dropdown-content">
+              <li><a href="#" (click)="selectedTrimestre(1)">1er Trimestre</a></li>
+              <li><a href="#" (click)="selectedTrimestre(2)">2do Trimestre</a></li>
+              <li><a href="#" (click)="selectedTrimestre(3)">3er Trimestre</a></li>
+              <li><a href="#" (click)="selectedTrimestre(4)">4to Trimestre</a></li>
+          </ul>
+      </li>
+  </ul>
 </div>
