@@ -161,11 +161,22 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
     this.sharedData.setDatosTrim(this.datosTrim);
 
     this.datosTrim.sort((a, b) => {
+      // 1. Áreas que ya culminaron (totalIndicadoresFaltantes === 0) van primero
       if (a.totalIndicadoresFaltantes === 0 && b.totalIndicadoresFaltantes !== 0) return -1;
       if (b.totalIndicadoresFaltantes === 0 && a.totalIndicadoresFaltantes !== 0) return 1;
-      return 0;
+    
+      // 2. Si ambas áreas no han culminado, se ordenan por la diferencia entre completados y faltantes
+      const diferenciaA = a.totalIndicadoresTerm - a.totalIndicadoresFaltantes;
+      const diferenciaB = b.totalIndicadoresTerm - b.totalIndicadoresFaltantes;
+    
+      // Si una área tiene más completados que faltantes, va primero
+      if (diferenciaA > diferenciaB) return -1;
+      if (diferenciaA < diferenciaB) return 1;
+    
+      // 3. Si tienen la misma diferencia, se ordenan por el total de indicadores faltantes
+      return a.totalIndicadoresFaltantes - b.totalIndicadoresFaltantes;
     });
-
+    
     this.datosTrim.forEach((element) => {
       totalIndicadoresFinalizados += element.totalIndicadoresTerm;
       if (element.totalIndicadoresFaltantes === 0) totalAreasConcluidas++;
