@@ -14,7 +14,7 @@ export class AsideMenuComponent {
   constructor(private sharedData: SharedDataService) {}
   data: any[] = [];
 
-  selectedTrimestre(trimestre: number): void {
+  selectedTrimestre(trimestre: number, tipoData: string): void {
     let dataShared: any[] = [];
 
     this.sharedData.arregloGlobal$.subscribe(response => {
@@ -26,6 +26,7 @@ export class AsideMenuComponent {
           TotalActividades: element.TotalActividades,
           TotalComponentes: element.TotalComponentes,
           trimestre: trimestre,
+          tipoData: tipoData
         });
       });
     });

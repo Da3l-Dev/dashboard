@@ -11,6 +11,7 @@ import { ObtenerdatosService } from './services/obtenerdatos.service';
 import { SharedDataService } from './services/shared-data.service';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { Subscription, interval } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,7 @@ import { Subscription, interval } from 'rxjs';
     GraficaAnualComponent,
     CardInfoComponent,
     HttpClientModule,
+    CommonModule
   ],
   providers: [
     ObtenerdatosService,
@@ -121,6 +123,8 @@ export class AppComponent implements OnInit, OnDestroy {
       this.areas = await lastValueFrom(this.datosProyecto.getAllAreas());
       this.totalDeAreas = this.areas.length;
   
+
+
       // Realizar el conteo de componentes y actividades
       await this.conteoElementos(this.areas);
   
@@ -130,6 +134,7 @@ export class AppComponent implements OnInit, OnDestroy {
         TotalComponentes: this.totalDeComponentes,
         TotalActividades: this.totalDeActividades,
         trimestre: trimestreActual, // Mantener el trimestre seleccionado
+        tipoData: 'areas'
       }];
   
   
@@ -252,6 +257,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // Obtener Logros de cada área para poder hacer un análisis
         const logros = await lastValueFrom(this.datosProyecto.getDataLogros(idArea));
+
 
         await this.analisisDatos(logros);
 

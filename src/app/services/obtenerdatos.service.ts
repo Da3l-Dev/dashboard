@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, ObservedValueOf } from 'rxjs';
 import { environment } from '../../environment';
 import { response } from 'express';
 
@@ -39,6 +39,16 @@ export class ObtenerdatosService {
 
       return this.http.get<any>(`${this.baseUrl}/obtenerLogro`, {params}).pipe(
         map(response => Array.isArray(response) ? response: response.data || [])
+      );
+    }
+
+    getDataSeguimiento(idArea: number, year: number): Observable<any[]>{
+      const params = new HttpParams()
+        .set('idArea', idArea.toString())
+        .set('year', year.toString());
+
+      return this.http.get<any>(`${this.baseUrl}/obtenerDataSeguimiento`,{params}).pipe(
+        map(response => Array.isArray(response) ? response : response.data || [])
       );
     }
 }

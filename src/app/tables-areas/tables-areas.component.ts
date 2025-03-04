@@ -3,7 +3,7 @@ import { TableModule } from 'primeng/table';
 import { ObtenerdatosService } from '../services/obtenerdatos.service';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedDataService } from '../services/shared-data.service';
-import { lastValueFrom, Subscription } from 'rxjs';
+import { elementAt, lastValueFrom, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -22,6 +22,8 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
   datosTrim: any[] = [];
   datosGlobales: any[] = [];
   dataTotales: any[] = [];
+  dataSeguimiento: any[] = [];
+
 
   // Variables generales
   totalAreas: number = 0;
@@ -31,6 +33,10 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
   totalActividadesTerminadas: number = 0;
   totalIndicadoresAreaTerminados: number = 0;
   datosCargados: boolean = false;
+  tipoData: string = '';
+
+  // Variables de seguimiento
+  areasFinalizadasSeguimiento: number = 0; 
 
   // Subscripción para detectar cambios en el trimestre
   private globalSubscription: Subscription | undefined;
@@ -46,15 +52,23 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
       this.globalSubscription = this.sharedData.arregloGlobal$.subscribe(async (globalData) => {
         if (globalData.length > 0) {
           const nuevoTrimestre = globalData[0].trimestre;
+          this.tipoData = globalData[0].tipoData;
 
-          if (this.trimestre !== nuevoTrimestre) {
+          // Proceso para el calculo del avance de areas
+          if (this.trimestre !== nuevoTrimestre && this.tipoData === 'areas') {
             this.trimestre = nuevoTrimestre;
             this.totalAreas = globalData[0].TotalAreas;
 
-            console.log("Nuevo trimestre detectado:", this.trimestre);
+
 
             // Recalcular los datos con el nuevo trimestre
             await this.actualizarDatos();
+          } 
+
+          // Proceso para poder calcular los datos del seguimiento de un area
+          if(this.tipoData === 'seguimiento'){
+            await this.calculosSeguimiento(this.datos, nuevoTrimestre); 
+
           }
         }
       });
@@ -90,7 +104,6 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
    */
   private async actualizarDatos(): Promise<void> {
     try {
-      console.log("Recalculando datos para el trimestre:", this.trimestre);
 
       this.datosCargados = false; // Indicar que está recalculando
 
@@ -193,4 +206,49 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
 
     this.sharedData.setDataTotales(this.dataTotales);
   }
+
+
+  // Funcion para el conteo de datos del seguimiento de las areas 
+  async calculosSeguimiento(areas: any[], trimestre: number): Promise<void> {
+    let idArea: number = 0;
+
+
+    for (const area of areas) {
+        // Obtención del idArea para poder calcular sus datos de seguimiento
+        idArea = area.idArea;
+
+        // Obtencion de los datos de seguimiento por area
+        const seguimiento =  await lastValueFrom(this.dataService.getDataSeguimiento(idArea, 2024));
+
+
+        await seguimiento.forEach(element => {
+          switch(trimestre){
+            // Datos Trimestre 1
+            case 1:
+              if(element.hallazgosTrim1 != null && element.indicadorTrim1 != null && element.justificaTrim1 != null && element.mediosTrim1 != null && element.mejoraTrim1 != null  && element.metaTrim1 != null && element.resumenTrim1 != null){
+                this.areasFinalizadasSeguimiento += 1;
+              }
+              break;
+
+            // Datos Trimestre 2
+            case 2:
+
+              break;
+
+            // Datos Trimestre 3
+            case 3:
+
+              break;
+            // Datos Trimestre 4
+            case 4:
+
+                break;
+          }
+        })
+
+    }
+
+  } 
 }
+
+
