@@ -56,21 +56,43 @@
   transition: background-color 0.3s ease;
   width: 100%;
   box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .dropdown-btn:hover {
   background-color: #3a4252;
 }
 
+/* Estilos para el ícono de flecha */
+.arrow {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+  left: 10px;
+}
+
+.arrow.rotate {
+  transform: rotate(180deg);
+}
+
 /* Estilos para el contenido desplegable */
 .dropdown-content {
-  display: none; /* Oculta el contenido por defecto */
+  max-height: 0; /* Inicialmente oculto */
+  overflow: hidden;
   width: 100%;
   background-color: #212631;
   border-radius: 4px;
   padding: 0;
   margin: 0;
   list-style: none;
+  transition: max-height 0.5s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.dropdown-content.show {
+  max-height: 500px; /* Altura máxima para la animación */
+  opacity: 1;
 }
 
 .dropdown-content li {
@@ -85,9 +107,4 @@
 
 .dropdown-content a:hover {
   background-color: #3a4252;
-}
-
-/* Mostrar el dropdown al hacer hover */
-.dropdown:hover .dropdown-content {
-  display: block;
 }

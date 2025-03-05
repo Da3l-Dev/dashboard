@@ -1,31 +1,37 @@
 <div class="menu-custom">
-  <!-- Iconos y logos de la sep -->
-  <div class="header-menu">
-      <img src="img/SEP_Logo_2019.svg.webp" alt="SEPH logo" title="Secretaria de Educacion Publica de Hidalgo">
+    <!-- Iconos y logos de la sep -->
+    <div class="header-menu">
+        <img src="img/SEP_Logo_2019.svg.webp" alt="SEPH logo" title="Secretaria de Educacion Publica de Hidalgo">
+    </div>
+  
+    <!-- Links -->
+    <ul class="direcciones">
+        <!-- Áreas -->
+        <li class="dropdown">
+            <a href="#" class="dropdown-btn" (click)="toggleDropdown('areas')">
+                Áreas
+                <span class="arrow" [class.rotate]="isAreasOpen">▼</span> <!-- Ícono de flecha -->
+            </a>
+            <ul class="dropdown-content" [class.show]="isAreasOpen">
+                <li><a href="#" (click)="selectedTrimestre(1, 'areas')">1er Trimestre</a></li>
+                <li><a href="#" (click)="selectedTrimestre(2, 'areas')">2do Trimestre</a></li>
+                <li><a href="#" (click)="selectedTrimestre(3, 'areas')">3er Trimestre</a></li>
+                <li><a href="#" (click)="selectedTrimestre(4, 'areas')">4to Trimestre</a></li>
+            </ul>
+        </li>
+  
+        <!-- Seguimiento -->
+        <li class="dropdown">
+            <a href="#" class="dropdown-btn" (click)="toggleDropdown('seguimiento')">
+                Seguimiento
+                <span class="arrow" [class.rotate]="isSeguimientoOpen">▼</span> <!-- Ícono de flecha -->
+            </a>
+            <ul class="dropdown-content" [class.show]="isSeguimientoOpen">
+                <li><a href="#" (click)="selectedTrimestre(1, 'seguimiento')">1er Trimestre</a></li>
+                <li><a href="#" (click)="selectedTrimestre(2, 'seguimiento')">2do Trimestre</a></li>
+                <li><a href="#" (click)="selectedTrimestre(3, 'seguimiento')">3er Trimestre</a></li>
+                <li><a href="#" (click)="selectedTrimestre(4, 'seguimiento')">4to Trimestre</a></li>
+            </ul>
+        </li>
+    </ul>
   </div>
-
-  <!-- Links -->
-  <ul class="direcciones">
-      <!-- Áreas -->
-      <li class="dropdown">
-          <a href="#" class="dropdown-btn">Áreas</a>
-          <ul class="dropdown-content">
-              <li><a href="#" (click)="selectedTrimestre(1, 'areas')">1er Trimestre</a></li>
-              <li><a href="#" (click)="selectedTrimestre(2, 'areas')">2do Trimestre</a></li>
-              <li><a href="#" (click)="selectedTrimestre(3, 'areas')">3er Trimestre</a></li>
-              <li><a href="#" (click)="selectedTrimestre(4, 'areas')">4to Trimestre</a></li>
-          </ul>
-      </li>
-
-      <!-- Seguimiento -->
-      <li class="dropdown">
-          <a href="#" class="dropdown-btn">Seguimiento</a>
-          <ul class="dropdown-content">
-              <li><a href="#" (click)="selectedTrimestre(1, 'seguimiento')">1er Trimestre</a></li>
-              <li><a href="#" (click)="selectedTrimestre(2, 'seguimiento')">2do Trimestre</a></li>
-              <li><a href="#" (click)="selectedTrimestre(3, 'seguimiento')">3er Trimestre</a></li>
-              <li><a href="#" (click)="selectedTrimestre(4, 'seguimiento')">4to Trimestre</a></li>
-          </ul>
-      </li>
-  </ul>
-</div>

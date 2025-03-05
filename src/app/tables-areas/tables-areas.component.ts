@@ -3,7 +3,7 @@ import { TableModule } from 'primeng/table';
 import { ObtenerdatosService } from '../services/obtenerdatos.service';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedDataService } from '../services/shared-data.service';
-import { elementAt, lastValueFrom, Subscription } from 'rxjs';
+import { elementAt, isEmpty, lastValueFrom, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -36,7 +36,6 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
   tipoData: string = '';
 
   // Variables de seguimiento
-  areasFinalizadasSeguimiento: number = 0; 
 
   // Subscripción para detectar cambios en el trimestre
   private globalSubscription: Subscription | undefined;
@@ -173,20 +172,11 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
 
     this.sharedData.setDatosTrim(this.datosTrim);
 
-    this.datosTrim.sort((a, b) => {
-      // 1. Áreas que ya culminaron (totalIndicadoresFaltantes === 0) van primero
+     this.datosTrim.sort((a, b) => {
       if (a.totalIndicadoresFaltantes === 0 && b.totalIndicadoresFaltantes !== 0) return -1;
       if (b.totalIndicadoresFaltantes === 0 && a.totalIndicadoresFaltantes !== 0) return 1;
-    
-      // 2. Si ambas áreas no han culminado, se ordenan por la diferencia entre completados y faltantes
-      const diferenciaA = a.totalIndicadoresTerm - a.totalIndicadoresFaltantes;
-      const diferenciaB = b.totalIndicadoresTerm - b.totalIndicadoresFaltantes;
-    
-      // Si una área tiene más completados que faltantes, va primero
-      if (diferenciaA > diferenciaB) return -1;
-      if (diferenciaA < diferenciaB) return 1;
-    
-      // 3. Si tienen la misma diferencia, se ordenan por el total de indicadores faltantes
+      if (a.totalIndicadoresTerm > b.totalIndicadoresTerm) return -1;
+      if (a.totalIndicadoresTerm < b.totalIndicadoresTerm) return 1;
       return a.totalIndicadoresFaltantes - b.totalIndicadoresFaltantes;
     });
     
@@ -208,47 +198,83 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
   }
 
 
-  // Funcion para el conteo de datos del seguimiento de las areas 
+  // Función para el conteo de datos del seguimiento de las áreas
   async calculosSeguimiento(areas: any[], trimestre: number): Promise<void> {
     let idArea: number = 0;
+    let areasFinalizadasSeguimiento = 0;
+    let totalComponenteSeguido: number = 0;
+    let dataSeguimientoTable: any [] = [];
+    this.datosCargados = false;
 
-
-    for (const area of areas) {
-        // Obtención del idArea para poder calcular sus datos de seguimiento
-        idArea = area.idArea;
-
-        // Obtencion de los datos de seguimiento por area
-        const seguimiento =  await lastValueFrom(this.dataService.getDataSeguimiento(idArea, 2024));
-
-
-        await seguimiento.forEach(element => {
-          switch(trimestre){
-            // Datos Trimestre 1
-            case 1:
-              if(element.hallazgosTrim1 != null && element.indicadorTrim1 != null && element.justificaTrim1 != null && element.mediosTrim1 != null && element.mejoraTrim1 != null  && element.metaTrim1 != null && element.resumenTrim1 != null){
-                this.areasFinalizadasSeguimiento += 1;
-              }
-              break;
-
-            // Datos Trimestre 2
-            case 2:
-
-              break;
-
-            // Datos Trimestre 3
-            case 3:
-
-              break;
-            // Datos Trimestre 4
-            case 4:
-
-                break;
-          }
-        })
-
+    // Verifica que el trimestre esté en el rango válido (1-4)
+    if (trimestre < 1 || trimestre > 4) {
+        console.error('Trimestre no válido. Debe ser un valor entre 1 y 4.');
+        return;
     }
 
-  } 
+    for (let i = 0; i < areas.length; i++) {
+        try {
+            // Obtención del idArea para poder calcular sus datos de seguimiento
+            idArea = areas[i].idArea;
+
+            // Obtención de los datos de seguimiento por área
+            const seguimientoTemp = await lastValueFrom(this.dataService.getDataSeguimiento(idArea, 2024));
+
+            // Recorrido de los datos del seguimiento del área
+            seguimientoTemp.forEach(element => {
+
+
+                // Construye dinámicamente los nombres de los campos según el trimestre
+                const camposRequeridos = [
+                    element[`hallazgosTrim${trimestre}`],
+                    element[`indicadorTrim${trimestre}`],
+                    element[`justificaTrim${trimestre}`],
+                    element[`mediosTrim${trimestre}`],
+                    element[`mejoraTrim${trimestre}`],
+                    element[`metaTrim${trimestre}`],
+                    element[`resumenTrim${trimestre}`]
+                ];
+
+                // Verifica si todos los campos requeridos no son nulos
+                if (camposRequeridos.every(campo => campo != null)) {
+                    totalComponenteSeguido += 1;
+                    areasFinalizadasSeguimiento += 1;
+                }
+
+                
+            });
+            
+            dataSeguimientoTable.push({
+              UnidadOperante: areas[i].cUnidadOperante || '',
+              totalIndicadoresTerm: totalComponenteSeguido,
+              totalIndicadoresFaltantes: seguimientoTemp.length - totalComponenteSeguido,
+            });
+
+
+            // Reiniciar conte de seguimiento concluido por area
+            totalComponenteSeguido = 0;
+
+        } catch (error) {
+            console.error(`Error al obtener datos de seguimiento para el área ${idArea}:`, error);
+        }
+    }
+
+    // Ordernar los datos de para imprimir datos en la grafica del seguimiento
+    this.datosTrim = dataSeguimientoTable.sort((a, b) => {
+      if (a.totalIndicadoresFaltantes === 0 && b.totalIndicadoresFaltantes !== 0) return -1;
+      if (b.totalIndicadoresFaltantes === 0 && a.totalIndicadoresFaltantes !== 0) return 1;
+      if (a.totalIndicadoresTerm > b.totalIndicadoresTerm) return -1;
+      if (a.totalIndicadoresTerm < b.totalIndicadoresTerm) return 1;
+      return a.totalIndicadoresFaltantes - b.totalIndicadoresFaltantes;
+    });
+
+
+    this.datosCargados = true;
+  
+    this.sharedData.setDatosTrim(this.datosTrim)
+
+    this.trimestre = 0;
+}
 }
 
 
