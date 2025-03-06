@@ -47,31 +47,30 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     try {
-      // Escuchar cambios en los datos globales (incluyendo el trimestre)
+      // Escuchar cambios en los datos globales (incluyendo el trimestre y tipoData)
       this.globalSubscription = this.sharedData.arregloGlobal$.subscribe(async (globalData) => {
         if (globalData.length > 0) {
           const nuevoTrimestre = globalData[0].trimestre;
           this.tipoData = globalData[0].tipoData;
-
-          // Proceso para el calculo del avance de areas
-          if (this.trimestre !== nuevoTrimestre && this.tipoData === 'areas') {
-            this.trimestre = nuevoTrimestre;
-            this.totalAreas = globalData[0].TotalAreas;
-
-
-
-            // Recalcular los datos con el nuevo trimestre
-            await this.actualizarDatos();
-          } 
-
-          // Proceso para poder calcular los datos del seguimiento de un area
-          if(this.tipoData === 'seguimiento'){
-            await this.calculosSeguimiento(this.datos, nuevoTrimestre); 
-
+  
+          // Proceso para el cálculo del avance de áreas
+          if (this.tipoData === 'areas') {
+            if (this.trimestre !== nuevoTrimestre) {
+              this.trimestre = nuevoTrimestre;
+              this.totalAreas = globalData[0].TotalAreas;
+  
+              // Recalcular los datos con el nuevo trimestre
+              await this.actualizarDatos();
+            }
+          }
+  
+          // Proceso para calcular los datos del seguimiento de un área
+          if (this.tipoData === 'seguimiento') {
+            await this.calculosSeguimiento(this.datos, nuevoTrimestre);
           }
         }
       });
-
+  
       // Escuchar cambios en los datos por área
       this.sharedData.arregloDataArea$.subscribe((data) => {
         if (data.length > 0) {
@@ -79,12 +78,16 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
           this.totalAreas = data.length;
         }
       });
-
+  
       // Escuchar cambios en las áreas
       this.sharedData.arregloAreas$.subscribe(async (data) => {
         if (data.length > 0) {
           this.datos = data;
-          await this.actualizarDatos();
+  
+          // Solo actualizar datos si no está en modo de seguimiento
+          if (this.tipoData !== 'seguimiento') {
+            await this.actualizarDatos();
+          }
         }
       });
     } catch (error) {
@@ -170,20 +173,28 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.sharedData.setDatosTrim(this.datosTrim);
-
-     this.datosTrim.sort((a, b) => {
+    
+    this.datosTrim.sort((a, b) => {
+      // 1. Mueve los que no tienen nada (totalIndicadoresTerm === 0) al final
+      if (a.totalIndicadoresTerm === 0 && b.totalIndicadoresTerm !== 0) return 1; // 'a' no tiene nada, 'b' sí, entonces 'a' va al final
+      if (b.totalIndicadoresTerm === 0 && a.totalIndicadoresTerm !== 0) return -1; // 'b' no tiene nada, 'a' sí, entonces 'b' va al final
+    
+      // 2. Mueve las áreas que han terminado (totalIndicadoresFaltantes === 0) al principio
       if (a.totalIndicadoresFaltantes === 0 && b.totalIndicadoresFaltantes !== 0) return -1;
       if (b.totalIndicadoresFaltantes === 0 && a.totalIndicadoresFaltantes !== 0) return 1;
-      if (a.totalIndicadoresTerm > b.totalIndicadoresTerm) return -1;
-      if (a.totalIndicadoresTerm < b.totalIndicadoresTerm) return 1;
-      return a.totalIndicadoresFaltantes - b.totalIndicadoresFaltantes;
+    
+      // 3. Mantén el orden original para los demás casos
+      return 0;
     });
+    
+    this.sharedData.setDatosTrim(this.datosTrim);
+
     
     this.datosTrim.forEach((element) => {
       totalIndicadoresFinalizados += element.totalIndicadoresTerm;
       if (element.totalIndicadoresFaltantes === 0) totalAreasConcluidas++;
     });
+
 
     totalAreasFaltantes = this.totalAreas - totalAreasConcluidas;
 
@@ -201,10 +212,14 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
   // Función para el conteo de datos del seguimiento de las áreas
   async calculosSeguimiento(areas: any[], trimestre: number): Promise<void> {
     let idArea: number = 0;
-    let areasFinalizadasSeguimiento = 0;
     let totalComponenteSeguido: number = 0;
-    let dataSeguimientoTable: any [] = [];
+    let dataSeguimientoTable: any[] = [];
     this.datosCargados = false;
+    let dataGeneralesSeguimiento: any[] = [];
+
+    // Variables para contar áreas terminadas y faltantes
+    let totalAreasTerminadas: number = 0;
+    let totalAreasFaltantes: number = 0;
 
     // Verifica que el trimestre esté en el rango válido (1-4)
     if (trimestre < 1 || trimestre > 4) {
@@ -219,11 +234,32 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
 
             // Obtención de los datos de seguimiento por área
             const seguimientoTemp = await lastValueFrom(this.dataService.getDataSeguimiento(idArea, 2024));
+            // Datos area (ficha técnica)
+            const datosArea = await lastValueFrom(this.dataService.getDataProyects(idArea, 2024));
 
-            // Recorrido de los datos del seguimiento del área
-            seguimientoTemp.forEach(element => {
+            // Crear un objeto para el área actual
+            const areaData = {
+                idArea: idArea,
+                cUnidadOperante: areas[i].cUnidadOperante || '', // Nombre del área
+                datos: seguimientoTemp.map(seguimiento => {
+                    // Buscar la ficha técnica correspondiente al idIndicador
+                    const fichaTecnica = datosArea.find(ficha => ficha.idIndicador === seguimiento.idIndicador);
 
+                    // Combinar los datos de seguimiento y ficha técnica (solo los campos necesarios)
+                    return {
+                        ...seguimiento, // Datos de seguimiento
+                        idComponente: fichaTecnica?.idComponente || null, // Campo de ficha técnica
+                        idActividad: fichaTecnica?.idActividad || null,   // Campo de ficha técnica
+                        numCA: fichaTecnica?.numCA || null               // Campo de ficha técnica
+                    };
+                })
+            };
 
+            // Agregar el área al arreglo unificado
+            dataGeneralesSeguimiento.push(areaData);
+
+            // Recorrido de los datos unificados para el área actual
+            areaData.datos.forEach(element => {
                 // Construye dinámicamente los nombres de los campos según el trimestre
                 const camposRequeridos = [
                     element[`hallazgosTrim${trimestre}`],
@@ -238,20 +274,17 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
                 // Verifica si todos los campos requeridos no son nulos
                 if (camposRequeridos.every(campo => campo != null)) {
                     totalComponenteSeguido += 1;
-                    areasFinalizadasSeguimiento += 1;
                 }
-
-                
             });
-            
+
+            // Agregar datos a la tabla de seguimiento
             dataSeguimientoTable.push({
-              UnidadOperante: areas[i].cUnidadOperante || '',
-              totalIndicadoresTerm: totalComponenteSeguido,
-              totalIndicadoresFaltantes: seguimientoTemp.length - totalComponenteSeguido,
+                UnidadOperante: areas[i].cUnidadOperante || '',
+                totalIndicadoresTerm: totalComponenteSeguido,
+                totalIndicadoresFaltantes: areaData.datos.length - totalComponenteSeguido,
             });
 
-
-            // Reiniciar conte de seguimiento concluido por area
+            // Reiniciar conteo de seguimiento concluido por área
             totalComponenteSeguido = 0;
 
         } catch (error) {
@@ -259,22 +292,73 @@ export class TablesAreasComponent implements OnInit, OnDestroy {
         }
     }
 
-    // Ordernar los datos de para imprimir datos en la grafica del seguimiento
+    // Ordenar los datos para imprimir en la gráfica del seguimiento
     this.datosTrim = dataSeguimientoTable.sort((a, b) => {
-      if (a.totalIndicadoresFaltantes === 0 && b.totalIndicadoresFaltantes !== 0) return -1;
-      if (b.totalIndicadoresFaltantes === 0 && a.totalIndicadoresFaltantes !== 0) return 1;
-      if (a.totalIndicadoresTerm > b.totalIndicadoresTerm) return -1;
-      if (a.totalIndicadoresTerm < b.totalIndicadoresTerm) return 1;
-      return a.totalIndicadoresFaltantes - b.totalIndicadoresFaltantes;
+        // 1. Mueve los que no tienen nada (totalIndicadoresTerm === 0) al final
+        if (a.totalIndicadoresTerm === 0 && b.totalIndicadoresTerm !== 0) return 1; // 'a' no tiene nada, 'b' sí, entonces 'a' va al final
+        if (b.totalIndicadoresTerm === 0 && a.totalIndicadoresTerm !== 0) return -1; // 'b' no tiene nada, 'a' sí, entonces 'b' va al final
+
+        // 2. Mueve las áreas que han terminado (totalIndicadoresFaltantes === 0) al principio
+        if (a.totalIndicadoresFaltantes === 0 && b.totalIndicadoresFaltantes !== 0) return -1;
+        if (b.totalIndicadoresFaltantes === 0 && a.totalIndicadoresFaltantes !== 0) return 1;
+
+        // 3. Mantén el orden original para los demás casos
+        return 0;
     });
 
+    // Inicializar contadores
+    this.totalIndicadoresAreaTerminados = 0;
+    this.totalComponentesTerminados = 0;
+    this.totalActividadesTerminadas = 0;
+
+    // Obtener todos los datos de las áreas
+    const todosLosDatos = dataGeneralesSeguimiento.flatMap(area => area.datos);
+
+    // Recorrer cada dato
+    todosLosDatos.forEach(dato => {
+        // Construir dinámicamente los nombres de los campos según el trimestre
+        const camposRequeridos = [
+            dato[`hallazgosTrim${trimestre}`],
+            dato[`indicadorTrim${trimestre}`],
+            dato[`justificaTrim${trimestre}`],
+            dato[`mediosTrim${trimestre}`],
+            dato[`mejoraTrim${trimestre}`],
+            dato[`metaTrim${trimestre}`],
+            dato[`resumenTrim${trimestre}`]
+        ];
+
+        // Verificar si todos los campos requeridos están completos
+        if (camposRequeridos.every(campo => campo != null)) {
+            this.totalIndicadoresAreaTerminados++;
+
+            // Verificar si es un componente o una actividad
+            if (dato.idComponente !== 0 && (dato.idActividad === 0 || dato.idActividad === null)) {
+                this.totalComponentesTerminados++;
+            }
+
+            if (!isNaN(parseFloat(dato.numCA)) && parseFloat(dato.numCA) % 1 !== 0) {
+                this.totalActividadesTerminadas++;
+            }
+        }
+    });
+
+    // Contar áreas terminadas y faltantes
+    totalAreasTerminadas = this.datosTrim.filter(area => area.totalIndicadoresFaltantes === 0).length;
+    totalAreasFaltantes = areas.length - totalAreasTerminadas;
+
+    // Actualizar dataTotales con los nuevos valores
+    this.dataTotales = [{
+        totalAreasCulminadas: totalAreasTerminadas,
+        totalAreasFaltantes: totalAreasFaltantes,
+        totalComponentesTerminados: this.totalComponentesTerminados,
+        totalActividadesTerminados: this.totalActividadesTerminadas,
+    }];
+
+    // Enviar los datos actualizados al servicio compartido
+    this.sharedData.setDataTotales(this.dataTotales);
+    this.sharedData.setDatosTrim(this.datosTrim);
 
     this.datosCargados = true;
-  
-    this.sharedData.setDatosTrim(this.datosTrim)
-
     this.trimestre = 0;
 }
 }
-
-

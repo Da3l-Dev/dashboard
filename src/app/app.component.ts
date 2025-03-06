@@ -34,6 +34,7 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent implements OnInit, OnDestroy {
   private intervalSubscription: Subscription | undefined;
+  private enSeguimiento: boolean = false; // Variable para rastrear el modo de seguimiento
 
   constructor(
     private datosProyecto: ObtenerdatosService,
@@ -103,93 +104,93 @@ export class AppComponent implements OnInit, OnDestroy {
   async obtenerDatos(): Promise<void> {
     try {
       console.log("Obteniendo datos...");
-  
+
       // Reiniciar variables antes de calcular nuevos datos
       this.reiniciarVariables();
-  
+
       // Obtener el trimestre actual desde SharedDataService o usar 1 si no hay datos
       let trimestreActual = 1;
-      
+      let tipoData = 'areas';
+
       try {
         const globalData = await firstValueFrom(this.sharedData.arregloGlobal$);
         if (globalData && globalData.length > 0 && globalData[0].trimestre) {
-          trimestreActual = globalData[0].trimestre; // Mantiene el trimestre seleccionado
+          trimestreActual = globalData[0].trimestre;
+          tipoData = globalData[0].tipoData; // Mantiene el trimestre seleccionado
         }
       } catch (error) {
         console.warn("No se pudo obtener el trimestre, usando el valor por defecto (1).");
       }
-  
+
       // Obtener las áreas
       this.areas = await lastValueFrom(this.datosProyecto.getAllAreas());
       this.totalDeAreas = this.areas.length;
-  
-
 
       // Realizar el conteo de componentes y actividades
       await this.conteoElementos(this.areas);
-  
+
       // Guardar datos globales con el trimestre correcto
       this.datosGlobales = [{
         TotalAreas: this.totalDeAreas,
         TotalComponentes: this.totalDeComponentes,
         TotalActividades: this.totalDeActividades,
         trimestre: trimestreActual, // Mantener el trimestre seleccionado
-        tipoData: 'areas'
+        tipoData: tipoData
       }];
-  
-  
-      // Guardar datos trimestrales
-      this.datosTrimestre = [
-        {
-          trimestre: 1,
-          totalLogros: this.totalLogrosTrim1,
-          totalCuasaTrim1: this.totalCausaTerminadaTrim1,
-          totalEfectoTrim1: this.totalEfectoTerminadaTrim1,
-          totalEvidenciaTrim1: this.totalEvidenciasTerminadasTrim1,
-          totalObs1Trim1: this.totalObs1TerminadasTrim1,
-          totalObs2Trim1: this.totalObs2TerminadasTrim1,
-        },
-        {
-          trimestre: 2,
-          totalLogros: this.totalLogrosTrim2,
-          totalCuasaTrim2: this.totalCausaTerminadaTrim2,
-          totalEfectoTrim2: this.totalEfectoTerminadaTrim2,
-          totalEvidenciaTrim2: this.totalEvidenciasTerminadasTrim2,
-          totalObs1Trim2: this.totalObs1TerminadasTrim2,
-          totalObs2Trim2: this.totalObs2TerminadasTrim2,
-        },
-        {
-          trimestre: 3,
-          totalLogros: this.totalLogrosTrim3,
-          totalCuasaTrim3: this.totalCausaTerminadaTrim3,
-          totalEfectoTrim3: this.totalEfectoTerminadaTrim3,
-          totalEvidenciaTrim3: this.totalEvidenciasTerminadasTrim3,
-          totalObs1Trim3: this.totalObs1TerminadasTrim3,
-          totalObs2Trim3: this.totalObs2TerminadasTrim3,
-        },
-        {
-          trimestre: 4,
-          totalLogros: this.totalLogrosTrim4,
-          totalCuasaTrim4: this.totalCausaTerminadaTrim4,
-          totalEfectoTrim4: this.totalEfectoTerminadaTrim4,
-          totalEvidenciaTrim4: this.totalEvidenciasTerminadasTrim4,
-          totalObs1Trim4: this.totalObs1TerminadasTrim4,
-          totalObs2Trim4: this.totalObs2TerminadasTrim4,
-        }
-      ];
-  
+
+      // Solo realizar el conteo de logros si no está en modo de seguimiento
+      if (!this.enSeguimiento) {
+        // Guardar datos trimestrales
+        this.datosTrimestre = [
+          {
+            trimestre: 1,
+            totalLogros: this.totalLogrosTrim1,
+            totalCuasaTrim1: this.totalCausaTerminadaTrim1,
+            totalEfectoTrim1: this.totalEfectoTerminadaTrim1,
+            totalEvidenciaTrim1: this.totalEvidenciasTerminadasTrim1,
+            totalObs1Trim1: this.totalObs1TerminadasTrim1,
+            totalObs2Trim1: this.totalObs2TerminadasTrim1,
+          },
+          {
+            trimestre: 2,
+            totalLogros: this.totalLogrosTrim2,
+            totalCuasaTrim2: this.totalCausaTerminadaTrim2,
+            totalEfectoTrim2: this.totalEfectoTerminadaTrim2,
+            totalEvidenciaTrim2: this.totalEvidenciasTerminadasTrim2,
+            totalObs1Trim2: this.totalObs1TerminadasTrim2,
+            totalObs2Trim2: this.totalObs2TerminadasTrim2,
+          },
+          {
+            trimestre: 3,
+            totalLogros: this.totalLogrosTrim3,
+            totalCuasaTrim3: this.totalCausaTerminadaTrim3,
+            totalEfectoTrim3: this.totalEfectoTerminadaTrim3,
+            totalEvidenciaTrim3: this.totalEvidenciasTerminadasTrim3,
+            totalObs1Trim3: this.totalObs1TerminadasTrim3,
+            totalObs2Trim3: this.totalObs2TerminadasTrim3,
+          },
+          {
+            trimestre: 4,
+            totalLogros: this.totalLogrosTrim4,
+            totalCuasaTrim4: this.totalCausaTerminadaTrim4,
+            totalEfectoTrim4: this.totalEfectoTerminadaTrim4,
+            totalEvidenciaTrim4: this.totalEvidenciasTerminadasTrim4,
+            totalObs1Trim4: this.totalObs1TerminadasTrim4,
+            totalObs2Trim4: this.totalObs2TerminadasTrim4,
+          }
+        ];
+      }
+
       // Enviar datos a SharedDataService
       this.sharedData.setArregloAreas(this.areas);
       this.sharedData.setArregloDataAreas(this.datosArea);
       this.sharedData.setArregloGlobal(this.datosGlobales);
 
-  
       console.log('Datos enviados a SharedDataService con trimestre:', trimestreActual);
     } catch (error) {
       console.error('Error al obtener los datos:', error);
     }
   }
-  
 
   // Función para reiniciar todas las variables
   private reiniciarVariables(): void {
@@ -255,11 +256,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
         total = 0;
 
-        // Obtener Logros de cada área para poder hacer un análisis
-        const logros = await lastValueFrom(this.datosProyecto.getDataLogros(idArea));
-
-
-        await this.analisisDatos(logros);
+        // Solo obtener y analizar logros si no está en modo de seguimiento
+        if (!this.enSeguimiento) {
+          // Obtener Logros de cada área para poder hacer un análisis
+          const logros = await lastValueFrom(this.datosProyecto.getDataLogros(idArea));
+          await this.analisisDatos(logros);
+        }
 
         // Recorrer los datos de cada área y hacer el conteo de actividades y componentes
         datos.forEach((element) => {
@@ -361,5 +363,11 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  // Método para cambiar el estado de seguimiento
+  toggleSeguimiento(): void {
+    this.enSeguimiento = !this.enSeguimiento;
+    console.log(`Modo de seguimiento: ${this.enSeguimiento ? 'Activado' : 'Desactivado'}`);
   }
 }

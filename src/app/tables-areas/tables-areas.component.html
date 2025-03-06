@@ -17,8 +17,10 @@
   <ng-template pTemplate="header">
     <tr>
       <th>Unidad Operativa</th>
-      <th>Indicadores Finalizados</th>
-      <th>Indicadores Faltantes</th>
+      <th *ngIf="tipoData === 'areas'">Indicadores Finalizados</th>
+      <th *ngIf="tipoData === 'seguimiento'">Indicadores Revisados</th>
+      <th *ngIf="tipoData === 'areas'">Indicadores Faltantes</th>
+      <th *ngIf="tipoData === 'seguimiento'">Indicadores No Revisados</th>
       <th>Estatus</th>
     </tr>
   </ng-template>

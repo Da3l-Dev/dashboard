@@ -7,7 +7,9 @@
             <div class="surface-card shadow-2 p-3 border-round"  style="width: 100%; background-color: rgb(67, 160, 71) !important;">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">Areas Finalizadas</span>
+                        <span *ngIf="tipoData === 'areas'" class="block text-500 font-medium mb-3">Areas Finalizadas</span>
+                        <span *ngIf="tipoData === 'seguimiento'" class="block text-500 font-medium mb-3">Areas Totales Revisadas</span>
+
                         <div class="text-900 font-medium text-xl">{{ areasFinalizadas }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center border-round custom-bg" style="width:2.5rem;height:2.5rem;">
@@ -22,7 +24,8 @@
             <div class="surface-card shadow-2 p-3 border-round" style="width: 100%; background-color:rgb(229 83 83) !important;">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">Areas Faltantes</span>
+                        <span *ngIf="tipoData === 'areas'" class="block text-500 font-medium mb-3">Areas Faltantes</span>
+                        <span *ngIf="tipoData === 'seguimiento'" class="block text-500 font-medium mb-3">Areas Faltantes Por Revisar</span>
                         <div class="text-900 font-medium text-xl">{{ areasFaltantes }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
@@ -37,7 +40,8 @@
             <div class="surface-card shadow-2 p-3 border-round" style="width: 100%; background-color: rgb(51 153 255)!important;">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3"># Componentes Finalizados</span>
+                        <span *ngIf="tipoData === 'areas'" class="block text-500 font-medium mb-3"># Componentes Finalizados</span>
+                        <span *ngIf="tipoData === 'seguimiento'" class="block text-500 font-medium mb-3"># Componentes Revisados</span>
                         <div class="text-900 font-medium text-xl">{{ componentesFinalizados }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-cyan-100 border-round" style="width:2.5rem;height:2.5rem">
@@ -53,7 +57,8 @@
             <div class="surface-card shadow-2 p-3 border-round" style="width: 100%; background-color: rgb(88 86 214) !important;">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3"># Actividades Finalizadas</span>
+                        <span *ngIf="tipoData === 'areas'" class="block text-500 font-medium mb-3"># Actividades Finalizadas</span>
+                        <span *ngIf="tipoData === 'seguimiento'" class="block text-500 font-medium mb-3"># Actividades Revisadas</span>
                         <div class="text-900 font-medium text-xl">{{ actividadesFinalizadas }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width:2.5rem;height:2.5rem">
