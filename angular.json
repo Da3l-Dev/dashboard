@@ -50,6 +50,8 @@
                   "maximumError": "8kB"
                 }
               ],
+              
+              "baseHref": "/dashboard/",    
               "outputHashing": "all"
             },
             "development": {
