@@ -50,6 +50,13 @@
                   "maximumError": "8kB"
                 }
               ],
+
+              "fileReplacements": [
+                {
+                  "replace": "src/environment.ts",
+                  "with": "src/environment.prod.ts"
+                }
+              ],
               
               "baseHref": "/dashboard/",    
               "outputHashing": "all"
