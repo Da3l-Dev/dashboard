@@ -32,6 +32,7 @@ export class CardComponent implements OnInit{
       }
     });
 
+    // Obtencion de datos totales de componentes
     this.sharedData.dataTotales$.subscribe(data => {
       if(data.length > 0 ){
         this.dataTotales = data;
